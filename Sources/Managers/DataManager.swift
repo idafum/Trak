@@ -85,10 +85,16 @@ class DataManager {
         
     }
     
-    func listSubjects()throws {
+    
+    func listSubjects()throws -> [String] {
         /*
          Return a list
          */
+        let subjectURLs = try fileManager.contentsOfDirectory(at: dbSubjectsURL, includingPropertiesForKeys: [], options: .skipsHiddenFiles)
+        
+        let subjectNames = subjectURLs.map { $0.lastPathComponent }
+        print(subjectNames)
+        return []
         
     }
     

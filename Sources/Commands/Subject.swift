@@ -15,7 +15,7 @@ extension Trak {
             commandName: "subject",
             abstract: "Manage your subjects",
             shouldDisplay: true,
-            subcommands: [Create.self]
+            subcommands: [Create.self, List.self]
             
         )
         
