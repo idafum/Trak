@@ -102,6 +102,20 @@ class DataManager {
         return subjectNames
     }
     
+    func deleteSubject(subject: String) throws {
+        //This will delete a subject from the dbSubjectsURL directore if it exist
+        //TODO: Ensure, the dbSubjectsURL exists
+        let subjectToDeleteURL: URL = dbSubjectsURL.appending(path: subject, directoryHint:.isDirectory)
+        
+        do {
+            try fileManager.removeItem(at: subjectToDeleteURL)
+        }
+        catch {
+            throw StorageError.failedToDelete(url: subjectToDeleteURL, underlying: error)
+        }
+        
+    }
+    
     /*
      What: getSubjects Function
      Why: Get a list of Subject Directory URL

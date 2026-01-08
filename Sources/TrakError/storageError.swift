@@ -10,6 +10,7 @@ enum StorageError: Error {
     case failedToCreateDirectory(url: URL, underlying: Error)
     case fileAlreadyExists(url: URL)
     case failedToGetDirectoryContents(url: URL, underlying: Error)
+    case failedToDelete(url: URL, underlying: Error)
 }
 
 extension StorageError: LocalizedError {
@@ -29,6 +30,9 @@ extension StorageError: LocalizedError {
             
         case .failedToGetDirectoryContents(url: let url, underlying: let underlying):
             return "Failed to get directory contents at \(url.path()): \(underlying.localizedDescription)"
+            
+        case .failedToDelete(url: let url, underlying: let underlying):
+            return "Failed to delete file '\(url.lastPathComponent)': \(underlying.localizedDescription)"
         }
     }
 }
