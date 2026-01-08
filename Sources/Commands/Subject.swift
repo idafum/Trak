@@ -64,9 +64,16 @@ extension Trak {
             //Use <dataManager> from <TrakApp> to list all Subjects
             do {
                 let subjects: [String] = try TrakApp.dataManager.listSubjects()
-                print (subjects)
-                //TODO: Display strings in a list form for user
-                //TODO: Add a signal text to start a subject session
+                
+                if subjects.isEmpty {
+                    print ("...No subjects found...")
+                    print ("Use 'trak subject create <name>' to create a new subject.")
+                } else {
+                    print (subjects)
+                }
+                
+                //TODO: Display strings in a list form for user (Acceptance Criteria)
+                //TODO: Add a signal text to start a subject session (Acceptance Criteria)
             }
             catch StorageError.failedToGetDirectoryContents(_: let url, underlying: let underlying){
                 print("Error accessing file system at \(url): \(underlying)")
