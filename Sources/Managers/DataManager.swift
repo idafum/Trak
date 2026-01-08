@@ -73,7 +73,6 @@ class DataManager {
         let newSubjectURL = dbSubjectsURL.appending(path: fileName, directoryHint: .isDirectory)
         
         if (fileManager.fileExists(atPath: newSubjectURL.path(percentEncoded: false))){
-            print("here")
             throw StorageError.fileAlreadyExists(url: newSubjectURL)
         }
         
@@ -85,11 +84,22 @@ class DataManager {
         
     }
     
-    func listSubjects()throws {
+    
+    func listSubjects()throws -> [String] {
         /*
          Return a list
          */
+        let subjectURLs : [URL]
         
+        do {
+            subjectURLs = try fileManager.contentsOfDirectory(at: dbSubjectsURL, includingPropertiesForKeys: [], options: .skipsHiddenFiles)
+        } catch {
+            throw StorageError.failedToGetDirectoryContents(url: dbSubjectsURL, underlying: error)
+        }
+        
+        let subjectNames : [String] = subjectURLs.map { $0.lastPathComponent }
+    
+        return subjectNames
     }
     
     /*

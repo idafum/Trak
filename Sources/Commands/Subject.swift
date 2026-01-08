@@ -15,7 +15,7 @@ extension Trak {
             commandName: "subject",
             abstract: "Manage your subjects",
             shouldDisplay: true,
-            subcommands: [Create.self]
+            subcommands: [Create.self, List.self]
             
         )
         
@@ -63,10 +63,21 @@ extension Trak {
         func run() throws {
             //Use <dataManager> from <TrakApp> to list all Subjects
             do {
-                try TrakApp.dataManager.listSubjects()
+                let subjects: [String] = try TrakApp.dataManager.listSubjects()
+                
+                if subjects.isEmpty {
+                    print ("...No subjects found...")
+                    print ("Use 'trak subject create <name>' to create a new subject.")
+                } else {
+                    print (subjects)
+                }
+                
+                //TODO: Display strings in a list form for user (Acceptance Criteria)
+                //TODO: Add a signal text to start a subject session (Acceptance Criteria)
             }
-            catch{
-             //
+            catch StorageError.failedToGetDirectoryContents(_: let url, underlying: let underlying){
+                print("Error accessing file system at \(url): \(underlying)")
+                throw ExitCode.failure
             }
         }
     }

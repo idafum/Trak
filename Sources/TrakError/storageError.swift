@@ -9,6 +9,7 @@ enum StorageError: Error {
     case appSupportDirectoryNotFound
     case failedToCreateDirectory(url: URL, underlying: Error)
     case fileAlreadyExists(url: URL)
+    case failedToGetDirectoryContents(url: URL, underlying: Error)
 }
 
 extension StorageError: LocalizedError {
@@ -25,6 +26,9 @@ extension StorageError: LocalizedError {
                 """
         case .fileAlreadyExists(url: let url):
             return "File already exists at \(url.path())"
+            
+        case .failedToGetDirectoryContents(url: let url, underlying: let underlying):
+            return "Failed to get directory contents at \(url.path()): \(underlying.localizedDescription)"
         }
     }
 }
