@@ -63,10 +63,14 @@ extension Trak {
         func run() throws {
             //Use <dataManager> from <TrakApp> to list all Subjects
             do {
-                try TrakApp.dataManager.listSubjects()
+                let subjects: [String] = try TrakApp.dataManager.listSubjects()
+                print (subjects)
+                //TODO: Display strings in a list form for user
+                //TODO: Add a signal text to start a subject session
             }
-            catch{
-             //
+            catch StorageError.failedToGetDirectoryContents(_: let url, underlying: let underlying){
+                print("Error accessing file system at \(url): \(underlying)")
+                throw ExitCode.failure
             }
         }
     }
