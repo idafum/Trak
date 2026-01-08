@@ -15,7 +15,7 @@ extension Trak {
             commandName: "subject",
             abstract: "Manage your subjects",
             shouldDisplay: true,
-            subcommands: [Create.self, List.self]
+            subcommands: [Create.self, List.self, Delete.self]
             
         )
         
@@ -54,7 +54,7 @@ extension Trak.Subject {
     }
 }
 
-extension Trak {
+extension Trak.Subject {
     struct List : ParsableCommand {
         static let configuration = CommandConfiguration (
             abstract: "List all subjects"
@@ -82,4 +82,26 @@ extension Trak {
         }
     }
 
+}
+
+extension Trak.Subject {
+    struct Delete : ParsableCommand {
+        static let configuration = CommandConfiguration (
+            abstract: "Delete a subject"
+        )
+        
+        @Argument(help: "The name of the subject to delete")
+        var name: String
+        
+        func run () throws {
+            // Use <dataManager from <TrakApp> to delete a subject
+            do {
+                try TrakApp.dataManager.deleteSubject(subject: name)
+                print ("'\(name)' deleted!")
+            }
+            catch let err as StorageError{
+                print(err.localizedDescription)
+            }
+        }
+    }
 }
