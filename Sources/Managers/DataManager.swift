@@ -116,6 +116,18 @@ class DataManager {
         
     }
     
+    func renameSubject(oldSubjectName: String, newSubjectName: String) throws {
+        let oldSubjectNameURL = dbSubjectsURL.appending(path: oldSubjectName, directoryHint: .isDirectory)
+        let newSubjectNameURL = dbSubjectsURL.appending(path: newSubjectName, directoryHint: .isDirectory)
+        do {
+
+            try fileManager.moveItem(at: oldSubjectNameURL, to: newSubjectNameURL)
+        }
+        catch {
+            throw StorageError.failedToPerfomRenameOperation(oldURL: oldSubjectNameURL, newURL: newSubjectNameURL, underlying: error)
+        }
+    }
+    
     /*
      What: getSubjects Function
      Why: Get a list of Subject Directory URL

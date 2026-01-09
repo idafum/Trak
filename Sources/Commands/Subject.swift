@@ -15,7 +15,7 @@ extension Trak {
             commandName: "subject",
             abstract: "Manage your subjects",
             shouldDisplay: true,
-            subcommands: [Create.self, List.self, Delete.self]
+            subcommands: [Create.self, List.self, Delete.self, Rename.self]
             
         )
         
@@ -101,6 +101,33 @@ extension Trak.Subject {
             }
             catch let err as StorageError{
                 print(err.localizedDescription)
+                throw ExitCode.failure
+            }
+        }
+    }
+}
+
+extension Trak.Subject {
+    
+    struct Rename: ParsableCommand {
+        static let configuration = CommandConfiguration(
+            abstract: "Rename a subject"
+        )
+        
+        @Argument(help: "The old name")
+        var oldName: String
+        
+        @Argument(help: "The new name")
+        var newName: String
+        
+        func run () throws {
+            //use the <data manager> from <Trak>
+            do {
+                try TrakApp.dataManager.renameSubject(oldSubjectName: oldName, newSubjectName: newName)
+                print("Renamed '\(oldName)' to '\(newName)'")
+            } catch let err as StorageError {
+                print (err.localizedDescription)
+                throw ExitCode.failure
             }
         }
     }
