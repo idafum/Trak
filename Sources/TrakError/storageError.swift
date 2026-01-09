@@ -11,6 +11,7 @@ enum StorageError: Error {
     case fileAlreadyExists(url: URL)
     case failedToGetDirectoryContents(url: URL, underlying: Error)
     case failedToDelete(url: URL, underlying: Error)
+    case failedToPerfomRenameOperation(oldURL: URL, newURL: URL, underlying: Error)
 }
 
 extension StorageError: LocalizedError {
@@ -33,6 +34,9 @@ extension StorageError: LocalizedError {
             
         case .failedToDelete(url: let url, underlying: let underlying):
             return "Failed to delete file '\(url.lastPathComponent)': \(underlying.localizedDescription)"
+            
+        case .failedToPerfomRenameOperation(oldURL: let oldURL, newURL: let newURL, underlying: let underlying):
+            return "Failed to rename file from '\(oldURL.lastPathComponent)' to '\(newURL.lastPathComponent),  \(underlying.localizedDescription)"
         }
     }
 }
