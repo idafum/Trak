@@ -20,4 +20,7 @@ enum TrakApp {
         }
     }()
     
+    
+    nonisolated(unsafe) static let sessionManager = SessionManager(dataManager: dataManager)
+    
 }

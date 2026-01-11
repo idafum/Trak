@@ -16,7 +16,7 @@ struct Trak: ParsableCommand {
         commandName: "trak",
         version: "0.1.0",
         shouldDisplay: true,
-        subcommands: [Init.self, Subject.self]
+        subcommands: [Init.self, Subject.self, Session.self]
     )
     
     func run() {
