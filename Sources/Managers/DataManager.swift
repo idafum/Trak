@@ -15,7 +15,7 @@ class DataManager {
     
     let dbRootURL: URL
     let dbSubjectsURL: URL
-    let dbSessionLogsURL: URL
+    let dbSessionsURL: URL
     
     
     /*
@@ -38,7 +38,7 @@ class DataManager {
         
         dbSubjectsURL = dbRootURL.appending(path: "Subjects", directoryHint: .isDirectory)
         
-        dbSessionLogsURL = dbRootURL.appending(path: "SessionLogs", directoryHint: .isDirectory)
+        dbSessionsURL = dbRootURL.appending(path: "Sessions", directoryHint: .isDirectory)
         
         
 
@@ -50,7 +50,7 @@ class DataManager {
     func setupDataStorage() throws{
         try ensureDirectoryExists(dbRootURL)
         try ensureDirectoryExists(dbSubjectsURL)
-        try ensureDirectoryExists(dbSessionLogsURL)
+        try ensureDirectoryExists(dbSessionsURL)
     }
     
     private func ensureDirectoryExists(_ url: URL) throws {
@@ -136,5 +136,28 @@ class DataManager {
         let subjectURLs = try fileManager.contentsOfDirectory(at: dbSubjectsURL, includingPropertiesForKeys: kCFURLNameKey as? [URLResourceKey])
         
         return subjectURLs
+    }
+    
+    func getSessionState () throws -> ActiveSession?{
+        let activeSessionURL = dbSessionsURL.appending(path: "activeSession.json", directoryHint: .notDirectory)
+        
+        guard fileManager.fileExists(atPath: activeSessionURL.path()) else {
+            return nil
+        }
+        
+        do {
+            //decode activeSession.json into ActiveSession Data Model.
+            //Get the jsonData
+            let jsonData = try Data(contentsOf: activeSessionURL)
+            
+            //initialize a JSON decoder
+            let decoder = JSONDecoder()
+            
+            let session = try decoder.decode(ActiveSession.self, from: jsonData)
+            
+            return session
+        } catch {
+            throw error
+        }
     }
 }
