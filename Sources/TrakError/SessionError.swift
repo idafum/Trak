@@ -1,0 +1,55 @@
+//
+//  sessionError.swift
+//  Trak
+//
+//  Created by Somtochukwu Idafum on 2026-01-11.
+//
+import Foundation
+
+/// Errors related to session workflow and session state transition in Trak.
+enum SessionError: Error {
+    /// The user provided an invalid subject string (empty, whitespace, etc)
+    case invalidSubjectName(String)
+    
+    /// The subject does not exist in storage.
+    case subjectNotFound(String)
+    
+    /// The user attempts to start a session when an Active session exists
+    case sessionAlreadyActive(ActiveSession)
+    
+    
+}
+
+extension SessionError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidSubjectName(let name):
+            return "Invalid subject name: '\(name)'."
+        case .subjectNotFound(let name):
+            return "Subject not found: '\(name)'."
+        case .sessionAlreadyActive(let activeSession):
+            return """
+                
+                An active session already exists in '\(activeSession.subject)'
+                See session: trak session status 
+                
+                """
+        
+        }
+    }
+}
+
+extension SessionError {
+    /// exit codes for CLI usage.
+    
+    var exitCode: Int {
+        switch self {
+        case .invalidSubjectName:
+            return 2
+        case .subjectNotFound:
+            return 2
+        case .sessionAlreadyActive:
+            return 3
+        }
+    }
+}

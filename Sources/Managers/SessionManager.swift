@@ -9,19 +9,58 @@ import Foundation
 
 //SessionManager has mutable state.
 final class SessionManager {
+    
     let dataManager: DataManager
+    
     
     init (dataManager: DataManager) {
         self.dataManager = dataManager
     }
     
-    func getState() throws -> ActiveSession? {
-        //contact the dataManager to get session State.
-        do {
-            return try dataManager.getSessionState()
-        } catch {
-            throw error
+    
+    
+    /// Check the state of session
+    /// - Throws: A StorageError
+    /// - Returns: The ActiveSession of 'nil' if no session is active.
+    func checkSessionStatus() throws -> ActiveSession? {
+        try dataManager.getSessionState()
+    }
+    
+    
+    /// Handle logic to start a new session
+    /// - Parameter on: The subject to start a new session
+    func startSession(on: String) throws {
+        
+        // Check if the string is valid.
+        //TODO: Make subject data model
+        if on.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            throw SessionError.invalidSubjectName(on)
         }
+        
+        // Check if subjects Exists via DataManager
+        let subject = dataManager.fileExists(at: (root: .subjects, file: on))
+        
+        if !subject.exists {
+            throw SessionError.subjectNotFound(on)
+        }
+        
+        // Check if activeSession already exist (activeSession is not nil)
+        if let activeSession = try checkSessionStatus() {
+            throw SessionError.sessionAlreadyActive(activeSession)
+        }
+        
+        // Create the activeSession model
+        let newSession = ActiveSession(
+            subject: on,
+            startTime: Date(),
+            pausedAt: nil,
+            totalPausedDuration: .zero,
+            state: .active
+        )
+        
+        // Persit the data
+        try   dataManager.saveActiveSession(session: newSession)
+        
         
     }
         

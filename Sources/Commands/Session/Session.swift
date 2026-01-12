@@ -8,12 +8,12 @@
 import Foundation
 import ArgumentParser
 extension Trak {
-    
+            
     struct Session : ParsableCommand {
          
         static let configuration = CommandConfiguration(
             abstract: "Manage session",
-            subcommands: [Status.self]
+            subcommands: [Status.self, Start.self]
         )
         
         func run() throws {

@@ -18,7 +18,7 @@ extension Trak.Session {
         func run() throws {
             //Connects with the session Manager
             do {
-                let activeSession = try TrakApp.sessionManager.getState()
+                let activeSession = try TrakApp.sessionManager.checkSessionStatus()
                 if activeSession == nil {
                     print("""
                         
@@ -26,6 +26,8 @@ extension Trak.Session {
                         Start a session: trak session start <subject>
                         
                         """)
+                } else {
+                    print (activeSession)
                 }
             } catch {
                 
