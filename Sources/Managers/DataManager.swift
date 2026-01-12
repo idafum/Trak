@@ -138,26 +138,83 @@ class DataManager {
         return subjectURLs
     }
     
-    func getSessionState () throws -> ActiveSession?{
+    /// Persist a newly created active session
+    /// - Parameter session: A new active session
+    ///
+    func saveActiveSession (session: ActiveSession) throws {
+        
+        //Initialize and configure a json encoder
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted]
+        encoder.dateEncodingStrategy = .iso8601
+        
         let activeSessionURL = dbSessionsURL.appending(path: "activeSession.json", directoryHint: .notDirectory)
         
-        guard fileManager.fileExists(atPath: activeSessionURL.path()) else {
+        do {
+            let data: Data = try encoder.encode(session)
+            
+            //Persist the json in a file.
+            try data.write(to: activeSessionURL) //TODO: CONCURRENCY???
+            
+        } catch let error as EncodingError {
+            
+            throw StorageError.jsonEncodingFailed(data: session, underlying: error)
+        } catch {
+            throw StorageError.failedToWriteFile(url: activeSessionURL, underlying: error)
+        }
+        
+    }
+    
+    /// Get the state of the current active session
+    /// - Returns: An `ActiveSession` instance, or 'nil' if none exists.
+    /// - Throws: `StorageError` if the session state file exists but cannot be read or decoded.
+    func getSessionState () throws -> ActiveSession?{
+        let file = fileExists(at: (root: .sessions, file: "activeSession.json"))
+        
+        guard file.exists else {
             return nil
         }
         
         do {
-            //decode activeSession.json into ActiveSession Data Model.
-            //Get the jsonData
-            let jsonData = try Data(contentsOf: activeSessionURL)
+            //Get the file
+            let jsonData = try Data(contentsOf: file.url)
             
-            //initialize a JSON decoder
+            //Initialize a JSON Decoder
             let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
             
-            let session = try decoder.decode(ActiveSession.self, from: jsonData)
-            
-            return session
+            //decode type `ActiveSession` from jsonData
+            return try decoder.decode(ActiveSession.self, from: jsonData)
+
+        } catch let decodingError as DecodingError{
+            // JSON exists but is invalid or incompatible
+            throw StorageError.jsonDecodingFailed(url: file.url, underlying: decodingError)
         } catch {
-            throw error
+            // Any other I/O or unexpected error
+            throw StorageError.failedToReadFile(url: file.url, underlying: error)
         }
+        
+    }
+    
+    /// Checks whether a file exists at a given Trak root directory
+    /// - Parameter at: A tuple containing the root directory and the file
+    /// - Returns: A bool indicating if file exists at the root directory.
+    func fileExists( at: (root: dbRoots, file: String) ) -> (url: URL, exists: Bool){
+        
+        var fileURL: URL
+        
+        //switch case for all root directories in trak.
+        switch at.root {
+        case .sessions:
+            fileURL = dbSessionsURL.appending(path: at.file)
+        case .subjects:
+            fileURL = dbSubjectsURL.appending(path: at.file)
+        case .trak:
+            fileURL = dbRootURL.appending(path: at.file)
+        }
+        
+        return ( fileURL, fileManager.fileExists(atPath: fileURL.path(percentEncoded: false)) )
     }
 }
+
+

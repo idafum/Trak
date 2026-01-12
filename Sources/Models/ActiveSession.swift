@@ -10,9 +10,8 @@ import Foundation
 struct ActiveSession : Codable{
     let subject: String
     let startTime: Date
-    let pausedAt: Data?
+    let pausedAt: Date?
     let totalPausedDuration: TimeInterval
     let state: SessionState
-    
 }
 

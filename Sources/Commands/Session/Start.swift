@@ -14,8 +14,16 @@ extension Trak.Session {
             abstract: "Start a new session"
         )
         
+        @Argument(help: "The subject of the session")
+        var subject: String
+        
         func run() throws {
-            
+            //tell session manager, User wishes to start a sesison on subject
+            do {
+                try TrakApp.sessionManager.startSession(on: subject)
+            } catch {
+                print(error.localizedDescription)
+            }
         }
     }
 }
