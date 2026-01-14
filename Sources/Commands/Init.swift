@@ -27,7 +27,7 @@ extension Trak {
         /// Excecutes the initialization process.
         ///
         /// This notifies the `DataManager` to create the required directories
-        /// - Throws:`ExitCode.Failure` if storage initialization fails
+        /// - Throws:`ExitCode.Failure` if `StorageError` is caught
         func run() throws{
             do {
                 try TrakApp.dataManager.setupDataStorage()
@@ -35,9 +35,8 @@ extension Trak {
             }
             catch let err as StorageError{
                 print(err.localizedDescription)
-                throw ExitCode.failure //Program terminates immediately
+                throw ExitCode.failure
             }
-            
         }
     }
 }

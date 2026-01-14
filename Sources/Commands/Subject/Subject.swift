@@ -8,7 +8,12 @@
 import ArgumentParser
 import Foundation
 
+/// Trak extension implementing command for managing subjects
 extension Trak {
+    
+    /// Manage subjects in trak
+    ///
+    /// This command can be used to  create, list, rename operation on a subject in trak
     struct Subject : ParsableCommand {
         
         static let configuration = CommandConfiguration(
@@ -16,41 +21,36 @@ extension Trak {
             abstract: "Manage your subjects",
             shouldDisplay: true,
             subcommands: [Create.self, List.self, Delete.self, Rename.self]
-            
         )
         
+        /// Execute the subject command
         func run() throws {
             print(Subject.helpMessage())
         }
-        
     }
 }
 
 extension Trak.Subject {
+    
+    /// Create a new subject
     struct Create : ParsableCommand {
-        
         static let configuration = CommandConfiguration(
             abstract: "Create a new subject"
         )
         
-        @Argument
+        @Argument(help: "The name of the subject")
         var name: String
         
+        /// Execute the create command
         func run() throws {
-            //Use <dataManger> from <TrakApp> to create a new file with <filename>
-            //If file does exitst already, stop creation and inform us that that file already exists. Maybe then show command to List all subjects?
-            
             do {
-                try TrakApp.dataManager.createSubject(fileName: name)
+                try TrakApp.subjectManager.createSubject(name: name)
                 print("New subject \(name) created.")
-            }
-            catch StorageError.fileAlreadyExists(url: let url){
-                print("oops '\(url.lastPathComponent)' already exists.")
-                print("Use 'trak subject list' to list all subjects.")
+            } catch let err as StorageError{
+                print (err.localizedDescription)
                 throw ExitCode.failure
             }
         }
-        
     }
 }
 
@@ -61,22 +61,23 @@ extension Trak.Subject {
         )
         
         func run() throws {
-            //Use <dataManager> from <TrakApp> to list all Subjects
             do {
-                let subjects: [String] = try TrakApp.dataManager.listSubjects()
+                let subjects: [SubjectData] = try TrakApp.subjectManager.listSubjects()
                 
                 if subjects.isEmpty {
-                    print ("...No subjects found...")
-                    print ("Use 'trak subject create <name>' to create a new subject.")
+                    print ("""
+                        No subjects found
+                        Use: `trak subject create <name>` to create a new subject.
+                        """)
                 } else {
-                    print (subjects)
+                    print (subjects.map(\.name).joined(separator: "\n"))
                 }
                 
                 //TODO: Display strings in a list form for user (Acceptance Criteria)
                 //TODO: Add a signal text to start a subject session (Acceptance Criteria)
             }
-            catch StorageError.failedToGetDirectoryContents(_: let url, underlying: let underlying){
-                print("Error accessing file system at \(url): \(underlying)")
+            catch let err as StorageError{
+                print (err.localizedDescription)
                 throw ExitCode.failure
             }
         }
