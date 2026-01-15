@@ -7,6 +7,6 @@
 
 import Foundation
 struct SubjectData : Codable {
-    let name: String
-    let dateCreated: Date
+    var name: String
+    var dateCreated: Date
 }

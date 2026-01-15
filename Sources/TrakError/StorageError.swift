@@ -8,6 +8,7 @@ import Foundation
 enum StorageError: Error {
     case failedToCreateDirectory(URL, Error)
     case fileAlreadyExists(url: URL)
+    case NoSuchFile(String)
     case failedToGetDirectoryContents(url: URL, underlying: Error)
     case failedToDelete(url: URL, underlying: Error)
     case failedToPerfomRenameOperation(oldURL: URL, newURL: URL, underlying: Error)
@@ -23,6 +24,8 @@ enum StorageError: Error {
 extension StorageError: LocalizedError {
     var errorDescription: String?{
         switch self {
+        case .NoSuchFile(let name):
+            return "No such file: \(name)"
         case .invalidSubjectName(let name):
             return "Invalid name: \(name)"
         case .failedToCreateDirectory(let at, let underlying):
@@ -34,7 +37,7 @@ extension StorageError: LocalizedError {
                 Reason: \(underlying.localizedDescription)
                 """
         case .fileAlreadyExists(url: let url):
-            return "File already exists at \(url.path())"
+            return "Subject `\(url.lastPathComponent)` exists already."
             
         case .failedToGetDirectoryContents(url: let url, underlying: let underlying):
             return "Failed to get directory contents at \(url.path()): \(underlying.localizedDescription)"

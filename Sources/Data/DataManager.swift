@@ -142,16 +142,50 @@ class DataManager {
         
     }
     
-    func renameSubject(oldSubjectName: String, newSubjectName: String) throws {
-        let oldSubjectNameURL = dbSubjectsURL.appending(path: oldSubjectName, directoryHint: .isDirectory)
-        let newSubjectNameURL = dbSubjectsURL.appending(path: newSubjectName, directoryHint: .isDirectory)
+    /// Rename a subject
+    func renameSubjectRecord(_ oldName: String, _ newName: String) throws {
+        let oldSubjectName = "\(oldName).json"
+        let newSubjectName = "\(newName).json"
+        
+        //Check if file under the oldName exists under subjects
+        let oldSubject = fileExists(at: (root: .subjects, file: oldSubjectName))
+        let newSubject = fileExists(at: (root: .subjects, file: newSubjectName))
+        
+        guard oldSubject.exists else { throw StorageError.NoSuchFile(oldName) }
+        
+        //Chech if newSubjects already exists.
+        if newSubject.exists {
+            throw StorageError.fileAlreadyExists(url: newSubject.url)
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+        
         do {
-
-            try fileManager.moveItem(at: oldSubjectNameURL, to: newSubjectNameURL)
+            //read from disk and decode
+            let oldBytes = try Data(contentsOf: oldSubject.url)
+            var subject = try decoder.decode(SubjectData.self, from: oldBytes)
+            
+            //update the name
+            subject.name = newName
+            
+            //encode to JSON and write to disk
+            let newBytes = try encoder.encode(subject)
+            try newBytes.write(to: newSubject.url, options: .atomic)
+            
+            // Remove old file after successful write
+            try fileManager.removeItem(at: oldSubject.url)
         }
-        catch {
-            throw StorageError.failedToPerfomRenameOperation(oldURL: oldSubjectNameURL, newURL: newSubjectNameURL, underlying: error)
+        catch let err as DecodingError {
+            throw StorageError.jsonDecodingFailed(underlying: err)
         }
+        catch let err as EncodingError{
+            throw StorageError.jsonEncodingFailed(underlying: err)
+        }
+        
     }
     
     

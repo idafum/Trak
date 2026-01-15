@@ -19,7 +19,7 @@ class SubjectManager {
         let normalizedName = normalizeSubjectName(name)
         
         if normalizedName.isEmpty{
-            throw StorageError.invalidSubjectName(normalizedName)
+            throw StorageError.invalidSubjectName(name)
         }
     
         //Create a new subject model.
@@ -34,6 +34,24 @@ class SubjectManager {
     ///
     func listSubjects() throws -> [SubjectData]{
         try dataManager.getSubjects()
+    }
+    
+    /// Task the persistence layer to rename a subject
+    ///
+    func renameSubject(_ oldname: String, _ newName: String) throws {
+        // Normalize the subject name
+        let normalizedOldName = normalizeSubjectName(oldname)
+        let normalizedNewName = normalizeSubjectName(newName)
+        
+        if normalizedNewName.isEmpty {
+            throw StorageError.invalidSubjectName(oldname)
+        }
+        if normalizedNewName.isEmpty {
+            throw StorageError.invalidSubjectName(newName)
+        }
+        
+        //Persist
+        try dataManager.renameSubjectRecord(normalizedOldName, normalizedNewName)
     }
     
     /// Normalize subject names
