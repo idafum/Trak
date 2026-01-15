@@ -128,18 +128,23 @@ class DataManager {
         return subjects
     }
     
-    func deleteSubject(subject: String) throws {
-        //This will delete a subject from the dbSubjectsURL directore if it exist
-        //TODO: Ensure, the dbSubjectsURL exists
-        let subjectToDeleteURL: URL = dbSubjectsURL.appending(path: subject, directoryHint:.isDirectory)
+    /// Delete a subject by name
+    func deleteSubject(_ name: String) throws {
+        let subjectFileName = "\(name).json"
         
+        //Check if the subjectFileName Exists
+        let subjectFile = fileExists(at: (root: .subjects, file: subjectFileName))
+        
+        //throw StorageError is file to be deleted does not exist
+        guard subjectFile.exists else {throw StorageError.NoSuchFile(name)}
+        
+        //Now we know the file exists.
+        //We need to remove the file
         do {
-            try fileManager.removeItem(at: subjectToDeleteURL)
+            try fileManager.removeItem(at: subjectFile.url)
+        } catch {
+            throw StorageError.failedToDelete(url: subjectFile.url, underlying: error)
         }
-        catch {
-            throw StorageError.failedToDelete(url: subjectToDeleteURL, underlying: error)
-        }
-        
     }
     
     /// Rename a subject

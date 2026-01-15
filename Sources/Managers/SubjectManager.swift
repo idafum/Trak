@@ -54,6 +54,19 @@ class SubjectManager {
         try dataManager.renameSubjectRecord(normalizedOldName, normalizedNewName)
     }
     
+    /// Task the persistence layer to delete a subject
+    ///
+    func deleteSubject(_ name: String) throws {
+        //Normalize the subject name
+        let normalizedName = normalizeSubjectName(name)
+        
+        if normalizedName.isEmpty {
+            throw StorageError.invalidSubjectName(name)
+        }
+        //Task the data manager
+        try dataManager.deleteSubject(normalizedName)
+    }
+    
     /// Normalize subject names
     /// - Parameter inputName: The subject name given by the user
     private func normalizeSubjectName (_ inputName: String) -> String {

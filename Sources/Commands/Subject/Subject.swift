@@ -31,26 +31,6 @@ extension Trak {
 }
 
 
-extension Trak.Subject {
-    struct Delete : ParsableCommand {
-        static let configuration = CommandConfiguration (
-            abstract: "Delete a subject"
-        )
-        
-        @Argument(help: "The name of the subject to delete")
-        var name: String
-        
-        func run () throws {
-            do {
-                try TrakApp.dataManager.deleteSubject(subject: name)
-                print ("'\(name)' deleted!")
-            }
-            catch let err as StorageError{
-                print(err.localizedDescription)
-                throw ExitCode.failure
-            }
-        }
-    }
-}
+
 
 
