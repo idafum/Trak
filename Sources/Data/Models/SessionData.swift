@@ -8,7 +8,7 @@
 import Foundation
 
 struct SessionData : Codable{
-    let subject: SubjectData
+    let subjectName: String
     let startTime: Date
     let pausedAt: Date?
     let totalPausedDuration: TimeInterval

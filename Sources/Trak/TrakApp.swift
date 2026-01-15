@@ -16,12 +16,14 @@ enum TrakApp {
         DataManager(appName: appName)
     }()
     
+    nonisolated(unsafe) static var subjectManager: SubjectManager = {
+        SubjectManager(dataManager: dataManager)
+    }()
+    
     nonisolated(unsafe) static var sessionManager: SessionManager = {
             SessionManager(dataManager: dataManager)
         }()
 
-    nonisolated(unsafe) static var subjectManager: SubjectManager = {
-        SubjectManager(dataManager: dataManager)
-    }()
+    
     
 }

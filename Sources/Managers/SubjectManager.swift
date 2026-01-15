@@ -16,7 +16,7 @@ class SubjectManager {
     /// Task the persistence layer to create a new subject
     /// - Parameter name: The name of the new subject
     func createSubject(name: String) throws {
-        let normalizedName = normalizeSubjectName(name)
+        let normalizedName = NameNormalizer.normalize(name)
         
         if normalizedName.isEmpty{
             throw StorageError.invalidSubjectName(name)
@@ -40,8 +40,8 @@ class SubjectManager {
     ///
     func renameSubject(_ oldname: String, _ newName: String) throws {
         // Normalize the subject name
-        let normalizedOldName = normalizeSubjectName(oldname)
-        let normalizedNewName = normalizeSubjectName(newName)
+        let normalizedOldName = NameNormalizer.normalize(oldname)
+        let normalizedNewName = NameNormalizer.normalize(newName)
         
         if normalizedNewName.isEmpty {
             throw StorageError.invalidSubjectName(oldname)
@@ -58,22 +58,12 @@ class SubjectManager {
     ///
     func deleteSubject(_ name: String) throws {
         //Normalize the subject name
-        let normalizedName = normalizeSubjectName(name)
+        let normalizedName = NameNormalizer.normalize(name)
         
         if normalizedName.isEmpty {
             throw StorageError.invalidSubjectName(name)
         }
         //Task the data manager
         try dataManager.deleteSubject(normalizedName)
-    }
-    
-    /// Normalize subject names
-    /// - Parameter inputName: The subject name given by the user
-    private func normalizeSubjectName (_ inputName: String) -> String {
-        //Normalize the subject name
-        return inputName
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-
     }
 }
