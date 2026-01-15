@@ -194,60 +194,59 @@ class DataManager {
     }
     
     
-    /// Persist a newly created active session
-    /// - Parameter session: A new active session
-    ///
-    func saveActiveSession (session: ActiveSession) throws {
-        
-        //Initialize and configure a json encoder
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted]
-        encoder.dateEncodingStrategy = .iso8601
-        
-        let activeSessionURL = dbSessionsURL.appending(path: "activeSession.json", directoryHint: .notDirectory)
-        
-        do {
-            let data: Data = try encoder.encode(session)
-            
-            //Persist the json in a file.
-            try data.write(to: activeSessionURL) //TODO: CONCURRENCY???
-            
-        } catch let error as EncodingError {
-            
-            throw StorageError.jsonEncodingFailed(underlying: error)
-        } catch {
-            throw StorageError.failedToWriteFile(url: activeSessionURL, underlying: error)
-        }
-        
-    }
+//    /// Persist a newly created active session
+//    /// - Parameter session: A new active session
+//    ///
+//    func saveActiveSession (session: ActiveSession) throws {
+//        
+//        //Initialize and configure a json encoder
+//        let encoder = JSONEncoder()
+//        encoder.outputFormatting = [.prettyPrinted]
+//        encoder.dateEncodingStrategy = .iso8601
+//        
+//        let activeSessionURL = dbSessionsURL.appending(path: "activeSession.json", directoryHint: .notDirectory)
+//        
+//        do {
+//            let data: Data = try encoder.encode(session)
+//            
+//            //Persist the json in a file.
+//            try data.write(to: activeSessionURL) //TODO: CONCURRENCY???
+//            
+//        } catch let error as EncodingError {
+//            
+//            throw StorageError.jsonEncodingFailed(underlying: error)
+//        } catch {
+//            throw StorageError.failedToWriteFile(url: activeSessionURL, underlying: error)
+//        }
+//        
+//    }
     
     /// Get the state of the current active session
-    /// - Returns: An `ActiveSession` instance, or 'nil' if none exists.
+    /// - Returns: An `SessionData` instance, or 'nil' if none exists.
     /// - Throws: `StorageError` if the session state file exists but cannot be read or decoded.
-    func getSessionState () throws -> ActiveSession?{
-        let file = fileExists(at: (root: .sessions, file: "activeSession.json"))
+    func getSessionState () throws -> SessionData?{
+        let sessionFile = fileExists(at: (root: .sessions, file: "activeSession.json"))
         
-        guard file.exists else {
-            return nil
-        }
+        // return nil if no session file exist
+        guard sessionFile.exists else { return nil }
         
         do {
             //Get the file
-            let jsonData = try Data(contentsOf: file.url)
+            let sessionFileBytes = try Data(contentsOf: sessionFile.url)
             
             //Initialize a JSON Decoder
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             
-            //decode type `ActiveSession` from jsonData
-            return try decoder.decode(ActiveSession.self, from: jsonData)
+            //decode type `SessionData` from jsonData
+            return try decoder.decode(SessionData.self, from: sessionFileBytes)
 
         } catch let decodingError as DecodingError{
             // JSON exists but is invalid or incompatible
             throw StorageError.jsonDecodingFailed(underlying: decodingError)
         } catch {
             // Any other I/O or unexpected error
-            throw StorageError.failedToReadFile(url: file.url, underlying: error)
+            throw StorageError.failedToReadFile(url: sessionFile.url, underlying: error)
         }
         
     }

@@ -15,7 +15,7 @@ enum SessionError: Error {
     case subjectNotFound(String)
     
     /// The user attempts to start a session when an Active session exists
-    case sessionAlreadyActive(ActiveSession)
+    //case sessionAlreadyActive(ActiveSession)
     
     
 }
@@ -27,13 +27,13 @@ extension SessionError: LocalizedError {
             return "Invalid subject name: '\(name)'."
         case .subjectNotFound(let name):
             return "Subject not found: '\(name)'."
-        case .sessionAlreadyActive(let activeSession):
-            return """
-                
-                An active session already exists in '\(activeSession.subject)'
-                See session: trak session status 
-                
-                """
+//        case .sessionAlreadyActive(let activeSession):
+//            return """
+//                
+//                An active session already exists in '\(activeSession.subject)'
+//                See session: trak session status 
+//                
+//                """
         
         }
     }
@@ -48,8 +48,8 @@ extension SessionError {
             return 2
         case .subjectNotFound:
             return 2
-        case .sessionAlreadyActive:
-            return 3
+//        case .sessionAlreadyActive:
+//            return 3
         }
     }
 }

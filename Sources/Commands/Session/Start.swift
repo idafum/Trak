@@ -20,9 +20,9 @@ extension Trak.Session {
         func run() throws {
             //tell session manager, User wishes to start a sesison on subject
             do {
-                try TrakApp.sessionManager.startSession(on: subject)
+               // try TrakApp.sessionManager.startSession(on: subject)
             } catch {
-                print(error.localizedDescription)
+               // print(error.localizedDescription)
             }
         }
     }
