@@ -18,9 +18,9 @@ extension Trak.Session {
         var subject: String
         
         func run() throws {
-            //tell session manager, User wishes to start a sesison on subject
             do {
                 try TrakApp.sessionManager.startSession(on: subject)
+                print("Now tracking `\(subject)`...")
             } catch {
                 print(error.localizedDescription)
             }

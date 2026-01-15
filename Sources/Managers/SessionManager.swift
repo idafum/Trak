@@ -12,54 +12,60 @@ final class SessionManager {
     
     let dataManager: DataManager
     
-    
     init (dataManager: DataManager) {
         self.dataManager = dataManager
     }
     
-    
-    
-    /// Check the state of session
-    /// - Throws: A StorageError
-    /// - Returns: The ActiveSession of 'nil' if no session is active.
-    func checkSessionStatus() throws -> ActiveSession? {
+    /// Task the persistence layer to get the current session
+    /// - Returns: Session or `nil` if there is no active session
+    func getSession() throws -> SessionData? {
         try dataManager.getSessionState()
     }
     
+
     
-    /// Handle logic to start a new session
+    /// Task the persistence to save and log a session on subject
     /// - Parameter on: The subject to start a new session
     func startSession(on: String) throws {
+        //Normalize the string
+        let normalizedName = NameNormalizer.normalize(on)
         
-        // Check if the string is valid.
-        //TODO: Make subject data model
-        if on.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        //check for error
+        if normalizedName.isEmpty {
             throw SessionError.invalidSubjectName(on)
         }
-        
-        // Check if subjects Exists via DataManager
-        let subject = dataManager.fileExists(at: (root: .subjects, file: on))
-        
-        if !subject.exists {
-            throw SessionError.subjectNotFound(on)
-        }
-        
-        // Check if activeSession already exist (activeSession is not nil)
-        if let activeSession = try checkSessionStatus() {
+        //Check if a Session already exist (activeSession is not nil)
+        if let activeSession = try getSession() {
             throw SessionError.sessionAlreadyActive(activeSession)
         }
         
-        // Create the activeSession model
-        let newSession = ActiveSession(
-            subject: on,
+        let newSession = SessionData(
+            subjectName: normalizedName,
             startTime: Date(),
             pausedAt: nil,
             totalPausedDuration: .zero,
             state: .active
         )
-        
-        // Persit the data
-        try   dataManager.saveActiveSession(session: newSession)
+        try dataManager.createSession(newSession)
+//        // Check if subjects Exists via DataManager
+//        let subject = dataManager.fileExists(at: (root: .subjects, file: normalizedName))
+//        
+//        guard subject.exists else {throw SessionError.subjectNotFound(on)}
+//        
+//
+//        
+//        
+//        // Create the activeSession model
+//        let newSession = SessionData(
+//            subjectName: normalizedName,
+//            startTime: Date(),
+//            pausedAt: nil,
+//            totalPausedDuration: .zero,
+//            state: .active
+//        )
+//        
+//        // Persit the data
+//        try dataManager.createSession(newSession)
         
         
     }

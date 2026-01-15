@@ -15,7 +15,7 @@ enum SessionError: Error {
     case subjectNotFound(String)
     
     /// The user attempts to start a session when an Active session exists
-    case sessionAlreadyActive(ActiveSession)
+    case sessionAlreadyActive(SessionData)
     
     
 }
@@ -27,10 +27,10 @@ extension SessionError: LocalizedError {
             return "Invalid subject name: '\(name)'."
         case .subjectNotFound(let name):
             return "Subject not found: '\(name)'."
-        case .sessionAlreadyActive(let activeSession):
+        case .sessionAlreadyActive(let session):
             return """
                 
-                An active session already exists in '\(activeSession.subject)'
+                '\(session.subjectName)' session in progress...
                 See session: trak session status 
                 
                 """

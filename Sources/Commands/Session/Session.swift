@@ -18,6 +18,7 @@ extension Trak {
         
         func run() throws {
             print(Session.helpMessage())
+            throw ExitCode.success
         }
     }
 }

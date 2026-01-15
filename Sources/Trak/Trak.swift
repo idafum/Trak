@@ -12,12 +12,19 @@ import Foundation
 @main
 struct Trak: ParsableCommand {
 
+    @OptionGroup var global : GlobalOptions
+    
     static let configuration = CommandConfiguration(
         commandName: "trak",
         version: "0.1.0",
         shouldDisplay: true,
         subcommands: [Init.self, Subject.self, Session.self]
     )
+    
+    //Run preflight. Trak has to be initialized
+    mutating func validate() throws {
+        try global.preflight()
+    }
     
     func run() {
         Figlet.say("Trak!")

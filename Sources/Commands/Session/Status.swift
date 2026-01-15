@@ -12,23 +12,21 @@ extension Trak.Session {
     struct Status : ParsableCommand {
         
         static let configuratiion = CommandConfiguration(
-            abstract: "Show the current status of the session."
+            abstract: "Show the current active session."
         )
         
         func run() throws {
-            //Connects with the session Manager
             do {
-                let activeSession = try TrakApp.sessionManager.checkSessionStatus()
-                if activeSession == nil {
+                let sessionData : SessionData? = try TrakApp.sessionManager.getSession()
+
+                guard let session = sessionData else {
                     print("""
-                        
                         No active session.
                         Start a session: trak session start <subject>
-                        
                         """)
-                } else {
-                    print (activeSession)
+                    throw ExitCode.success
                 }
+                print (session)
             } catch {
                 
             }

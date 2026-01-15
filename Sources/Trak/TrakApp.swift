@@ -5,22 +5,25 @@
 //  Created by Somtochukwu Idafum on 2025-12-24.
 //
 
-//This enum is being used as a namespace. It cannot be instantiated.
+
 import Foundation
 
+/// TrakApp serves as the application context. It holds Managers and meta data about trak
 enum TrakApp {
     static let appName = "Trak"
     
-    nonisolated(unsafe) static let dataManager = {
-        do {
-            return try DataManager(appName: appName)
-        }
-        catch{
-            fatalError("Failed to initialize DataManager: \(error)")
-        }
+    nonisolated(unsafe) static var dataManager: DataManager = {
+        DataManager(appName: appName)
     }()
     
+    nonisolated(unsafe) static var subjectManager: SubjectManager = {
+        SubjectManager(dataManager: dataManager)
+    }()
     
-    nonisolated(unsafe) static let sessionManager = SessionManager(dataManager: dataManager)
+    nonisolated(unsafe) static var sessionManager: SessionManager = {
+            SessionManager(dataManager: dataManager)
+        }()
+
+    
     
 }
