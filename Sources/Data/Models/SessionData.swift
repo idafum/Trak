@@ -15,3 +15,16 @@ struct SessionData : Codable{
     let state: SessionState
 }
 
+extension SessionData {
+    var elapsedInterval: TimeInterval {
+        -startTime.timeIntervalSinceNow
+    }
+    
+    var elapsedDisplay: String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter.string(from: elapsedInterval) ?? "0m"
+    }
+}
+

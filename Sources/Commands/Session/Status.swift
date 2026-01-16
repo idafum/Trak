@@ -26,7 +26,11 @@ extension Trak.Session {
                         """)
                     throw ExitCode.success
                 }
-                print (session)
+                
+                print ("""
+                    Current Session: \(session.subjectName)
+                    Time Elapsed: \(session.elapsedDisplay)
+                    """)
             } catch {
                 
             }
