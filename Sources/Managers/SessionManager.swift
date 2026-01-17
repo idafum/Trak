@@ -41,7 +41,32 @@ final class SessionManager {
             
             return try dataManager.setActiveSession(activeSession)
         }
-
+    }
+    
+    func resumeSession() throws -> SessionData? {
+        //Ask data if a paused Session Exists
+        guard var activeSession = try dataManager.getSessionState() else {
+            throw SessionError.noActiveSession
+        }
+        
+        if activeSession.state == .active { throw SessionError.sessionIsAlreadyActive }
+        
+        else {
+            //Calculate the paused duration
+            let pausedDuration = Date().timeIntervalSince(activeSession.pausedAt!)
+            
+            //Update the totalPausedTime
+            activeSession.totalPausedDuration += pausedDuration
+            
+            //Reset the session Paused at
+            activeSession.pausedAt = nil
+            
+            activeSession.state = .active
+            
+            //Pass this modified active session to data.
+            return try dataManager.setActiveSession(activeSession)
+        }
+        
     }
 
     
