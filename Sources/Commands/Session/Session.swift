@@ -13,7 +13,7 @@ extension Trak {
          
         static let configuration = CommandConfiguration(
             abstract: "Manage session",
-            subcommands: [Status.self, Start.self]
+            subcommands: [Status.self, Start.self, Pause.self]
         )
         
         func run() throws {

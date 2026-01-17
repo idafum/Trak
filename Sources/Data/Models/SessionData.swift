@@ -10,8 +10,21 @@ import Foundation
 struct SessionData : Codable{
     let subjectName: String
     let startTime: Date
-    let pausedAt: Date?
-    let totalPausedDuration: TimeInterval
-    let state: SessionState
+    var pausedAt: Date?
+    var totalPausedDuration: TimeInterval
+    var state: SessionState
+}
+
+extension SessionData {
+    var elapsedInterval: TimeInterval {
+        -startTime.timeIntervalSinceNow
+    }
+    
+    var elapsedDisplay: String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter.string(from: elapsedInterval) ?? "0m"
+    }
 }
 

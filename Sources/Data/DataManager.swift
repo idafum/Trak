@@ -195,7 +195,6 @@ class DataManager {
     
     func createSession (_ session: SessionData) throws {
         //Check if the subject with name exist
-        
         let subjectJsonFile = "\(session.subjectName).json"
         
         let subjectFile = fileExists(at: (root:.subjects, file: subjectJsonFile))
@@ -229,6 +228,7 @@ class DataManager {
     /// Get the state of the current active session
     /// - Returns: An `SessionData` instance, or 'nil' if none exists.
     /// - Throws: `StorageError` if the session state file exists but cannot be read or decoded.
+    /// - Refactor: getActiveSession(
     func getSessionState () throws -> SessionData?{
         let sessionFile = fileExists(at: (root: .sessions, file: "activeSession.json"))
         
@@ -256,6 +256,34 @@ class DataManager {
         
     }
     
+    func setActiveSession(_ session: SessionData) throws -> SessionData {
+        // Someone has the intent to persist this session data in my memory
+        // locate the active session
+        let activeSession = fileExists(at: (root: dbRoots.sessions, file: "activeSession.json"))
+        
+        //TODO: Extra security check to see if active Session exist
+        guard activeSession.exists else { throw SessionError.noActiveSession }
+        
+        //ActiveSession exists!
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        
+        do {
+            let dataToWrite = try encoder.encode(session)
+            
+            //should we ensure directory exists here??
+            try dataToWrite.write(to: activeSession.url, options: .atomic)
+            
+            return session //This is the session I saved
+        }catch let err as EncodingError{
+            throw StorageError.jsonEncodingFailed(underlying: err)
+        }catch {
+            throw StorageError.failedToWriteFile(url: activeSession.url, underlying: error)
+        }
+        
+        
+    }
+        
     /// Checks whether a file exists at a given Trak root directory
     /// - Parameter at: A tuple containing the root directory and the file
     /// - Returns: A bool indicating if file exists at the root directory.
