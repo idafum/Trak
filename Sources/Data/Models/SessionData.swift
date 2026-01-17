@@ -10,9 +10,9 @@ import Foundation
 struct SessionData : Codable{
     let subjectName: String
     let startTime: Date
-    let pausedAt: Date?
-    let totalPausedDuration: TimeInterval
-    let state: SessionState
+    var pausedAt: Date?
+    var totalPausedDuration: TimeInterval
+    var state: SessionState
 }
 
 extension SessionData {

@@ -17,6 +17,10 @@ enum SessionError: Error {
     /// The user attempts to start a session when an Active session exists
     case sessionAlreadyActive(SessionData)
     
+    case noActiveSession
+    
+    case sessionIsAlreadyPaused
+    
     
 }
 
@@ -34,6 +38,14 @@ extension SessionError: LocalizedError {
                 See session: trak session status 
                 
                 """
+        case .noActiveSession:
+            return "No active session."
+            
+        case .sessionIsAlreadyPaused:
+            return """
+                The current session is already paused
+                See session: trak session status
+                """
         
         }
     }
@@ -50,6 +62,12 @@ extension SessionError {
             return 2
         case .sessionAlreadyActive:
             return 3
+        case .noActiveSession:
+            return 3
+        case .sessionIsAlreadyPaused:
+            return 3
+            
         }
+    
     }
 }

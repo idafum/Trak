@@ -22,6 +22,27 @@ final class SessionManager {
         try dataManager.getSessionState()
     }
     
+    /// Task the persistence layer to pause the current session
+    /// - Returns: The current session or `nil` if there are no active session
+    func pauseSession() throws -> SessionData?{
+        //Ask data if session Exists
+        guard var activeSession = try dataManager.getSessionState() else {
+            throw SessionError.noActiveSession
+        }
+        
+        //There is an active session
+        //Check if session state is paused.
+        if activeSession.state == .paused {
+            throw SessionError.sessionIsAlreadyPaused
+        } else {
+            //set the session state
+            activeSession.pausedAt = Date() //Current time
+            activeSession.state = .paused
+            
+            return try dataManager.setActiveSession(activeSession)
+        }
+
+    }
 
     
     /// Task the persistence to save and log a session on subject
