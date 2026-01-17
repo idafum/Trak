@@ -41,7 +41,13 @@ final class SessionManager {
             
             return try dataManager.setActiveSession(activeSession)
         }
-
+    }
+    
+    func resumeSession() throws -> SessionData? {
+        //Ask data if a paused Session Exists
+        guard var activePausedSession = try dataManager.getSessionState() else {
+            throw SessionError.noActiveSession
+        }
     }
 
     
