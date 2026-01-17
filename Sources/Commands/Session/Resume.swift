@@ -16,7 +16,15 @@ extension Trak.Session {
         
         func run() throws {
             do {
-                let session = try TrakApp.sessionManager.resumeSession()
+                guard let session = try TrakApp.sessionManager.resumeSession() else {
+                    print ("No session found.")
+                    throw ExitCode.failure
+                }
+                print ("""
+                    Session: \(session.subjectName) resumed
+                    
+                    """)
+                
             } catch let err as SessionError{
                 print (err.localizedDescription)
             } catch let err as StorageError {
