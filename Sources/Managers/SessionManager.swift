@@ -49,8 +49,24 @@ final class SessionManager {
             throw SessionError.noActiveSession
         }
         
-        //Check if the activeSession is paused
-        if activeSession.state != .paused { throw SessionError.sessionIsAlreadyActive }
+        if activeSession.state == .active { throw SessionError.sessionIsAlreadyActive }
+        
+        else {
+            //Calculate the paused duration
+            let pausedDuration = Date().timeIntervalSince(activeSession.pausedAt!)
+            
+            //Update the totalPausedTime
+            activeSession.totalPausedDuration += pausedDuration
+            
+            //Reset the session Paused at
+            activeSession.pausedAt = nil
+            
+            activeSession.state = .active
+            
+            //Pass this modified active session to data.
+            return try dataManager.setActiveSession(activeSession)
+        }
+        
     }
 
     
