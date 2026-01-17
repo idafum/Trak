@@ -19,10 +19,10 @@ extension Trak.Session {
         
         func run() throws {
             do {
-                try TrakApp.sessionManager.EndSession(delete)
+                try TrakApp.sessionManager.endSession(delete)
             } catch let err as SessionError {
                 print(err.localizedDescription)
-                ExitCode.failure
+                throw ExitCode.failure
             }
         }
     }

@@ -68,6 +68,13 @@ final class SessionManager {
         }
         
     }
+    
+    func endSession(_ shouldDelete: Bool) throws -> SessionData?{
+        //Ask data if a session exists
+        guard var activeSession = try dataManager.getSessionState() else {
+            throw SessionError.noActiveSession
+        }
+    }
 
     
     /// Task the persistence to save and log a session on subject
