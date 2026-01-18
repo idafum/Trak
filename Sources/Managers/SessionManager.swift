@@ -93,12 +93,14 @@ final class SessionManager {
             activeSession.activeElapsed = now.timeIntervalSince(activeSession.startTime) - activeSession.totalPausedDuration
         }
         
-//        if shouldDelete {
-//            return try dataManager.clearActiveSession()
-//        } else {
-//            //Build a completes session Record
-//
-//        }
+        if shouldDelete {
+            let deleted = try dataManager.clearActiveSession()
+            if deleted
+        } else {
+            //Build a completes session Record
+            
+
+        }
     }
 
     

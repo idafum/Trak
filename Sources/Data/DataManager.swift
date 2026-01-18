@@ -280,8 +280,23 @@ class DataManager {
         }catch {
             throw StorageError.failedToWriteFile(url: activeSession.url, underlying: error)
         }
+    }
+    
+    /// Delete an active session
+    func clearActiveSession() throws -> Bool{
+        //Check is there is an active session
+        let activeSession = fileExists(at: (root: .sessions, file: "activeSession.json"))
         
+        guard activeSession.exists else { throw SessionError.noActiveSession }
         
+        //Active Session exists.
+        //No we need to just delete it from memory
+        do {
+            try fileManager.removeItem(at: activeSession.url)
+            return true
+        } catch {
+            throw StorageError.failedToDelete(url: activeSession.url, underlying: error)
+        }
     }
         
     /// Checks whether a file exists at a given Trak root directory
