@@ -69,7 +69,7 @@ final class SessionManager {
         
     }
     
-    func endSession(_ shouldDelete: Bool) throws -> SessionData?{
+    func endSession(_ shouldDelete: Bool) throws -> SessionLogData?{
         //Ask data if a session exists
         guard var activeSession = try dataManager.getSessionState() else {
             throw SessionError.noActiveSession
@@ -95,7 +95,7 @@ final class SessionManager {
         
         if shouldDelete {
             let deleted = try dataManager.clearActiveSession()
-            if deleted
+            
         } else {
             //Build a completes session Record
             
