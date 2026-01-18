@@ -13,6 +13,7 @@ struct SessionData : Codable{
     var pausedAt: Date?
     var totalPausedDuration: TimeInterval
     var state: SessionState
+    var activeElapsed: TimeInterval
 }
 
 extension SessionData {

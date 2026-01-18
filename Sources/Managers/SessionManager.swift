@@ -74,6 +74,31 @@ final class SessionManager {
         guard var activeSession = try dataManager.getSessionState() else {
             throw SessionError.noActiveSession
         }
+        
+        //Session Exists
+        //Check if paused.
+        if activeSession.state == .paused {
+            let now = Date()
+            //finalized paused time
+            let pausedDuration = now.timeIntervalSince(activeSession.pausedAt ?? now )
+            
+            //Update the totalPausedTime
+            activeSession.totalPausedDuration += pausedDuration
+            
+            //Reset the session Paused at
+            activeSession.pausedAt = nil
+            
+            activeSession.state = .active
+            
+            activeSession.activeElapsed = now.timeIntervalSince(activeSession.startTime) - activeSession.totalPausedDuration
+        }
+        
+//        if shouldDelete {
+//            return try dataManager.clearActiveSession()
+//        } else {
+//            //Build a completes session Record
+//
+//        }
     }
 
     
@@ -97,7 +122,8 @@ final class SessionManager {
             startTime: Date(),
             pausedAt: nil,
             totalPausedDuration: .zero,
-            state: .active
+            state: .active,
+            activeElapsed: 0.0
         )
         try dataManager.createSession(newSession)
     }
