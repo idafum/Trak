@@ -86,9 +86,12 @@ final class SessionManager {
             var now = Date()
             if activeSession.state == .paused {
                 var pauseDuration = now.timeIntervalSince(activeSession.pausedAt ?? now)
-                
+            
                 //Set the totalPausedDuration
                 totalPausedDuration = pauseDuration + activeSession.totalPausedDuration
+                
+            } else {
+                totalPausedDuration = activeSession.totalPausedDuration
             }
             
             //calculate the total elapsed time
