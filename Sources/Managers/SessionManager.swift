@@ -91,7 +91,9 @@ final class SessionManager {
                 totalPausedDuration = pauseDuration + activeSession.totalPausedDuration
             }
             
-        
+            //calculate the total elapsed time
+            var totalElapsedTime: TimeInterval = now.timeIntervalSince(activeSession.startTime)
+            
         }
         
         
