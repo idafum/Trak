@@ -75,32 +75,27 @@ final class SessionManager {
             throw SessionError.noActiveSession
         }
         
-        //Session Exists
-        //Check if paused.
-        if activeSession.state == .paused {
-            let now = Date()
-            //finalized paused time
-            let pausedDuration = now.timeIntervalSince(activeSession.pausedAt ?? now )
+        //Active Session Exists
+        if shouldDelete { //Delete Active session and do not log
+            let deleted = try dataManager.clearActiveSession()
+            return nil
             
-            //Update the totalPausedTime
-            activeSession.totalPausedDuration += pausedDuration
+        } else { //User wants to end and log session
             
-            //Reset the session Paused at
-            activeSession.pausedAt = nil
+            var totalPausedDuration: TimeInterval = 0
+            var now = Date()
+            if activeSession.state == .paused {
+                var pauseDuration = now.timeIntervalSince(activeSession.pausedAt ?? now)
+                
+                //Set the totalPausedDuration
+                totalPausedDuration = pauseDuration + activeSession.totalPausedDuration
+            }
             
-            activeSession.state = .active
-            
-            activeSession.activeElapsed = now.timeIntervalSince(activeSession.startTime) - activeSession.totalPausedDuration
+        
         }
         
-        if shouldDelete {
-            let deleted = try dataManager.clearActiveSession()
-            
-        } else {
-            //Build a completes session Record
-            
-
-        }
+        
+        
     }
 
     
