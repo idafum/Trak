@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct SessionLogData {
+struct SessionLogData : Codable{
     var subjectName: String
     var totalElapsedTime: TimeInterval
     var totalPausedTime: TimeInterval

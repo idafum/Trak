@@ -282,8 +282,31 @@ class DataManager {
         }
     }
     
-    func appendDataLog(_ sessionLogData: SessionLogData) throws -> SessionLogData {
-        
+    func appendDataLog(_ sessionLogData: SessionLogData) throws -> SessionLogData? {
+        if try clearActiveSession() {
+            //appendDataLog
+            let logName = "\(sessionLogData.subjectName).json"
+            
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            //Encode the data
+            do {
+                let dataToWrite = try encoder.encode(sessionLogData)
+                let path = dbSessionsURL.appending(path: logName, directoryHint: .notDirectory).path(percentEncoded: false)
+                if fileManager.createFile(atPath: path, contents: dataToWrite) {
+                    return sessionLogData
+                }
+                else {
+                    return nil
+                }
+            } catch let err as EncodingError {
+                throw StorageError.jsonEncodingFailed(underlying: err)
+            }
+           
+            
+        } else {
+            return nil
+        }
     }
     
     /// Delete an active session
