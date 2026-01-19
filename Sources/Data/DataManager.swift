@@ -282,6 +282,10 @@ class DataManager {
         }
     }
     
+    func appendDataLog(_ sessionLogData: SessionLogData) throws -> SessionLogData {
+        
+    }
+    
     /// Delete an active session
     func clearActiveSession() throws -> Bool{
         //Check is there is an active session
