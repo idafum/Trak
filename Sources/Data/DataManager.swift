@@ -282,7 +282,7 @@ class DataManager {
         }
     }
     
-    func appendDataLog(_ sessionLogData: SessionLogData) throws -> SessionLogData? {
+    func appendSessionLog(_ sessionLogData: SessionLogData) throws -> SessionLogData? {
         if try clearActiveSession() {
             //appendDataLog
             let logName = "\(sessionLogData.subjectName).json"

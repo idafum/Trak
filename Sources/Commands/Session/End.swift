@@ -19,7 +19,16 @@ extension Trak.Session {
         
         func run() throws {
             do {
-                let log = try TrakApp.sessionManager.endSession(delete)
+                guard let log = try TrakApp.sessionManager.endSession(delete) else {
+                    throw ExitCode.failure
+                }
+                print ("""
+                    \(log.subjectName) session ended
+                    
+                    Trak time: \(log.trakTimeDisplay)
+                    """)
+                
+                
             } catch let err as SessionError {
                 print(err.localizedDescription)
                 throw ExitCode.failure

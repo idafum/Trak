@@ -104,7 +104,7 @@ final class SessionManager {
             let sessionLogData = sessionLogBuilder(subjectName: activeSession.subjectName, totalElapsedTime: totalElapsedTime, totalPausedTime: totalPausedDuration, trakTime: trakTime)
             
             //Tell data to save our sessionLogData
-            return data.appendSessionLog(sessionLogData)
+            return try dataManager.appendSessionLog(sessionLogData)
             
         }
         
