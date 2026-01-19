@@ -68,6 +68,51 @@ final class SessionManager {
         }
         
     }
+    
+    func endSession(_ shouldDelete: Bool) throws -> SessionLogData?{
+        //Ask data if a session exists
+        guard var activeSession = try dataManager.getSessionState() else {
+            throw SessionError.noActiveSession
+        }
+        
+        //Active Session Exists
+        if shouldDelete { //Delete Active session and do not log
+            let deleted = try dataManager.clearActiveSession()
+            return nil
+            
+        } else { //User wants to end and log session
+            
+            var totalPausedDuration: TimeInterval = 0
+            var now = Date()
+            if activeSession.state == .paused {
+                var pauseDuration = now.timeIntervalSince(activeSession.pausedAt ?? now)
+            
+                //Set the totalPausedDuration
+                totalPausedDuration = pauseDuration + activeSession.totalPausedDuration
+                
+            } else {
+                totalPausedDuration = activeSession.totalPausedDuration
+            }
+            
+            //calculate the total elapsed time
+            var totalElapsedTime: TimeInterval = now.timeIntervalSince(activeSession.startTime)
+            
+            //Calculate the trak time
+            var trakTime: TimeInterval = totalElapsedTime - totalPausedDuration
+            
+            //Build our SessionLogData
+            let sessionLogData = sessionLogBuilder(subjectName: activeSession.subjectName, totalElapsedTime: totalElapsedTime, totalPausedTime: totalPausedDuration, trakTime: trakTime)
+            
+            //Tell data to save our sessionLogData
+            return try dataManager.appendSessionLog(sessionLogData)
+            
+        }
+        
+    }
+    
+    private func sessionLogBuilder(subjectName: String, totalElapsedTime: TimeInterval, totalPausedTime: TimeInterval, trakTime: TimeInterval) -> SessionLogData{
+        SessionLogData(subjectName: subjectName, totalElapsedTime: totalElapsedTime, totalPausedTime: totalPausedTime, trakTime: trakTime)
+    }
 
     
     /// Task the persistence to save and log a session on subject
@@ -90,7 +135,8 @@ final class SessionManager {
             startTime: Date(),
             pausedAt: nil,
             totalPausedDuration: .zero,
-            state: .active
+            state: .active,
+            activeElapsed: 0.0
         )
         try dataManager.createSession(newSession)
     }
