@@ -1,44 +1,63 @@
-# Trak 
-A study timer for focused work.
+## Trak  
+A terminal-first CLI study tracker built for developers and students.
 
-## Why Trak?
-Trak helps you understand **where your time actually goes**
+## Why Trak  
+Built for people who live in the terminal and want an offline way to track real **focused sessions**.
 
-Its primary goal is to track how much time you spend working on a subject and save that data locally.
+No accounts • No cloud • No distractions
 
-Its secondary goal is to help you lock in during focused study sessions.
+## Quick Start
 
-With Trak, you can see statements like:
+Get up and running in under a minute:
 
-- *“I’ve spent 12.5 hours learning Swift.”*
+### 1. Initialize Trak  
+Set up your local workspace (runs once):
 
-- *“I’ve spent 8 hours studying Cybersecurity.”*
+`trak init`
 
-## Who can use Trak?
-Anyone who wants clarity over their efforts.
+### 2. Create a subject  
+Organize sessions by what you're working on:
 
-If you care about how you spend your study time, Trak is for you.
+`trak subject create <subject>`
 
+### 3. Start tracking  
+Begin a focused session:
 
-"Lock in, Trak, Study"
+`trak session start <subject>`
 
+### 4. Control your session  
 
-## Features
+Take a break when life happens:
 
+`trak session pause`
 
-### Session
+Continue when you're back:
 
-- See Session Status
-    As a user, I want to see the current session status, if any.
-- Start Session
-    As a user I want to start a session for a subject.
-- Pause Session
-    As a user, I want to pause a session I started
-- Resume a Session
-    As a user, I want to resume a paused session.
-- End & Save a Session
-    As a user I want to End and Save a Session
-- End & Delete a Session
-    As a user I want to End & Delete a Session
-    
+`trak session resume`
+
+### 5. Finish and save the session
+
+`trak session end`
+
+### 6. Finish and discard the session
+
+`trak session end --delete`
+
+### 7. Reporting
+
+Sessions are stored locally and can be reviewed anytime:
+
+`trak report today`
+
+`trak report week`
+
+`trak report`
+
+## Demo
+*GIF coming soon...*
+
+## Roadmap
+### Trak for macOS
+
+- [ ] Native macOS app powered by Trak-CLI data
 
