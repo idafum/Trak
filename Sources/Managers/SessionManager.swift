@@ -94,6 +94,9 @@ final class SessionManager {
             //calculate the total elapsed time
             var totalElapsedTime: TimeInterval = now.timeIntervalSince(activeSession.startTime)
             
+            //Calculate the trak time
+            var trakTime: TimeInterval = totalElapsedTime - totalPausedDuration
+            
         }
         
         
