@@ -7,7 +7,8 @@
 
 import Foundation
 struct SessionLogData {
-    let subjectName: String
-    let startedAt: Date
-    let endedAt: Date
+    var subjectName: String
+    var totalElapsedTime: TimeInterval
+    var totalPausedTime: TimeInterval
+    var trakTime: TimeInterval
 }

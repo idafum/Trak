@@ -100,10 +100,15 @@ final class SessionManager {
             //Calculate the trak time
             var trakTime: TimeInterval = totalElapsedTime - totalPausedDuration
             
+            //Build our SessionLogData
+            let sessionLogData = sessionLogBuilder(subjectName: activeSession.subjectName, totalElapsedTime: totalElapsedTime, totalPausedTime: totalPausedDuration, trakTime: trakTime)
+            
         }
         
-        
-        
+    }
+    
+    private func sessionLogBuilder(subjectName: String, totalElapsedTime: TimeInterval, totalPausedTime: TimeInterval, trakTime: TimeInterval) -> SessionLogData{
+        SessionLogData(subjectName: subjectName, totalElapsedTime: totalElapsedTime, totalPausedTime: totalPausedTime, trakTime: trakTime)
     }
 
     
