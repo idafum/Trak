@@ -292,6 +292,13 @@ class DataManager {
             //Encode the data
             do {
                 let dataToWrite = try encoder.encode(sessionLogData)
+                
+                // Unique name
+                let timestamp = makeTimestamp(Date())   // or sessionLogData.endedAt if you have it
+                let shortId = UUID().uuidString.prefix(8)
+                
+                let logName = "\(sessionLogData.subjectName)-\(timestamp)-\(shortId).json"
+                
                 let path = dbSessionsURL.appending(path: logName, directoryHint: .notDirectory).path(percentEncoded: false)
                 if fileManager.createFile(atPath: path, contents: dataToWrite) {
                     return sessionLogData
@@ -303,10 +310,17 @@ class DataManager {
                 throw StorageError.jsonEncodingFailed(underlying: err)
             }
            
-            
         } else {
             return nil
         }
+    }
+    
+    private func makeTimestamp (_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return formatter.string(from: date)
     }
     
     /// Delete an active session
