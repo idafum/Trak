@@ -47,10 +47,6 @@ Continue when you're back:
 
 Sessions are stored locally and can be reviewed anytime:
 
-`trak report today`
-
-`trak report week`
-
 `trak report`
 
 ## Demo
