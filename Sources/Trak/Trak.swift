@@ -18,7 +18,7 @@ struct Trak: ParsableCommand {
         commandName: "trak",
         version: "0.1.0",
         shouldDisplay: true,
-        subcommands: [Init.self, Subject.self, Session.self]
+        subcommands: [Init.self, Subject.self, Session.self, Report.self]
     )
     
     //Run preflight. Trak has to be initialized

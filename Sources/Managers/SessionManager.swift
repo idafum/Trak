@@ -69,6 +69,15 @@ final class SessionManager {
         
     }
     
+    func getReports() throws -> [String : TimeInterval] {
+        let logs = try dataManager.getLogs()
+        var report: [String: TimeInterval] = [:]
+        for log in logs {
+            report[log.subjectName, default: 0] += log.trakTime
+        }
+        return report
+    }
+    
     func endSession(_ shouldDelete: Bool) throws -> SessionLogData?{
         //Ask data if a session exists
         guard let activeSession = try dataManager.getSessionState() else {
@@ -144,3 +153,4 @@ final class SessionManager {
     
     
 }
+

@@ -282,6 +282,43 @@ class DataManager {
         }
     }
     
+    func getLogs() throws -> [SessionLogData] {
+        // Find all log files matching pattern "<SubjectName>-#N.json" in the Sessions directory
+        let allFiles: [URL]
+        do {
+            allFiles = try fileManager.contentsOfDirectory(at: dbSessionsURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+        } catch {
+            throw StorageError.failedToGetDirectoryContents(url: dbSessionsURL, underlying: error)
+        }
+
+        // Filter to only files that match our log naming convention and are json files
+        let logFiles = allFiles.filter { url in
+            url.pathExtension == "json" && url.deletingPathExtension().lastPathComponent.contains("-#") && url.lastPathComponent != "activeSession.json"
+        }
+
+        // Return empty array if there are no logs
+        if logFiles.isEmpty {
+            return []
+        }
+
+        var logs: [SessionLogData] = []
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        for url in logFiles {
+            do {
+                let data = try Data(contentsOf: url)
+                let log = try decoder.decode(SessionLogData.self, from: data)
+                logs.append(log)
+            } catch let err as DecodingError {
+                throw StorageError.jsonDecodingFailed(underlying: err)
+            } catch {
+                throw StorageError.failedToReadFile(url: url, underlying: error)
+            }
+        }
+
+        return logs
+    }
     func appendSessionLog(_ sessionLogData: SessionLogData) throws -> SessionLogData? {
         if try clearActiveSession() {
             //appendDataLog
