@@ -18,17 +18,22 @@ extension Trak {
         func run() throws {
             //tell the sessionManager to get log
             do {
+                CLI.printHeader("Report")
                 let reports = try TrakApp.sessionManager.getReports()
                 if reports.isEmpty {
-                    print("No session logs found.")
+                    CLI.printInfo("No session logs found.")
                 } else {
                     for (subject, time) in reports.sorted(by: { $0.key < $1.key }) {
-                        print("\(subject): \(time) seconds")
+                        CLI.printTrakTime(subject: subject, seconds: time)
                     }
+                    CLI.printSuccess("Report generated.")
                 }
-            }
-            catch {
-                fputs("Failed to generate report: \(error)\n", stderr)
+            } catch {
+                if let localized = error as? LocalizedError, let message = localized.errorDescription {
+                    CLI.printError(message)
+                } else {
+                    CLI.printError("Unexpected error: \(error)")
+                }
             }
         }
     }
