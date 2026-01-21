@@ -282,22 +282,75 @@ class DataManager {
         }
     }
     
+    func getLogs() throws -> [SessionLogData] {
+        // Find all log files matching pattern "<SubjectName>-#N.json" in the Sessions directory
+        let allFiles: [URL]
+        do {
+            allFiles = try fileManager.contentsOfDirectory(at: dbSessionsURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+        } catch {
+            throw StorageError.failedToGetDirectoryContents(url: dbSessionsURL, underlying: error)
+        }
+
+        // Filter to only files that match our log naming convention and are json files
+        let logFiles = allFiles.filter { url in
+            url.pathExtension == "json" && url.deletingPathExtension().lastPathComponent.contains("-#") && url.lastPathComponent != "activeSession.json"
+        }
+
+        // Return empty array if there are no logs
+        if logFiles.isEmpty {
+            return []
+        }
+
+        var logs: [SessionLogData] = []
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        for url in logFiles {
+            do {
+                let data = try Data(contentsOf: url)
+                let log = try decoder.decode(SessionLogData.self, from: data)
+                logs.append(log)
+            } catch let err as DecodingError {
+                throw StorageError.jsonDecodingFailed(underlying: err)
+            } catch {
+                throw StorageError.failedToReadFile(url: url, underlying: error)
+            }
+        }
+
+        return logs
+    }
     func appendSessionLog(_ sessionLogData: SessionLogData) throws -> SessionLogData? {
         if try clearActiveSession() {
             //appendDataLog
-            let logName = "\(sessionLogData.subjectName).json"
+            
+            // Find existing log files for the subject with pattern "<SubjectName>-#N.json"
+            let existingLogs = try fileManager.contentsOfDirectory(at: dbSessionsURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                .filter { url in
+                    let filename = url.deletingPathExtension().lastPathComponent
+                    return filename.hasPrefix("\(sessionLogData.subjectName)-#")
+                }
+            
+            // Extract numbers N from filenames
+            let usedNumbers = existingLogs.compactMap { url -> Int? in
+                let filename = url.deletingPathExtension().lastPathComponent
+                // filename format: "<SubjectName>-#N"
+                // Extract substring after "\(subjectName)-#"
+                guard let range = filename.range(of: "-#") else { return nil }
+                let numberString = filename[range.upperBound...]
+                return Int(numberString)
+            }
+            
+            // Determine next available number
+            let nextNumber = (usedNumbers.max() ?? 0) + 1
+            
+            // Create new log file name
+            let logName = "\(sessionLogData.subjectName)-#\(nextNumber).json"
             
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
             //Encode the data
             do {
                 let dataToWrite = try encoder.encode(sessionLogData)
-                
-                // Unique name
-                let timestamp = makeTimestamp(Date())   // or sessionLogData.endedAt if you have it
-                let shortId = UUID().uuidString.prefix(8)
-                
-                let logName = "\(sessionLogData.subjectName)-\(timestamp)-\(shortId).json"
                 
                 let path = dbSessionsURL.appending(path: logName, directoryHint: .notDirectory).path(percentEncoded: false)
                 if fileManager.createFile(atPath: path, contents: dataToWrite) {

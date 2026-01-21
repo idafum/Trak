@@ -15,18 +15,17 @@ extension Trak.Session {
         
         func run() throws {
             do {
+                CLI.printHeader("Pause Session")
                 guard let session = try TrakApp.sessionManager.pauseSession() else {
-                    print ("No session running")
+                    CLI.printInfo("No session running.")
                     throw ExitCode.failure
                 }
-                print("""
-                    
-                    Session: \(session.subjectName)
-                    State: \(session.state)
-                    
-                    """)
-            }catch let err as StorageError{ //Cant pause a session that does not exist
-                print (err.localizedDescription)
+                CLI.printSuccess("Paused '\(session.subjectName)'.")
+            } catch let err as LocalizedError {
+                CLI.printError(err.errorDescription ?? "Failed to pause session.")
+                throw ExitCode.failure
+            } catch {
+                CLI.printError("Unexpected error: \(error)")
                 throw ExitCode.failure
             }
         }

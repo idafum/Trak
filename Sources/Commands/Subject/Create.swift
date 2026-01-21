@@ -21,10 +21,14 @@ extension Trak.Subject {
         /// Execute the create command
         func run() throws {
             do {
+                CLI.printHeader("Create Subject")
                 try TrakApp.subjectManager.createSubject(name: name)
-                print("New subject \(name) created.")
-            } catch let err as StorageError{
-                print (err.localizedDescription)
+                CLI.printSuccess("New subject '\(name)' created.")
+            } catch let err as LocalizedError {
+                CLI.printError(err.errorDescription ?? "Failed to create subject.")
+                throw ExitCode.failure
+            } catch {
+                CLI.printError("Unexpected error: \(error)")
                 throw ExitCode.failure
             }
         }

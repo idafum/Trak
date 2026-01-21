@@ -28,13 +28,16 @@ extension Trak {
         ///
         /// This notifies the `DataManager` to create the required directories
         /// - Throws:`ExitCode.Failure` if `StorageError` is caught
-        func run() throws{
+        func run() throws {
             do {
+                CLI.printHeader("Initialize Trak")
                 try TrakApp.dataManager.setupDataStorage()
-                print ("\nTrak storage initialized.\n")
-            }
-            catch let err as StorageError{
-                print(err.localizedDescription)
+                CLI.printSuccess("Trak storage initialized.")
+            } catch let err as LocalizedError {
+                CLI.printError(err.errorDescription ?? "Initialization failed.")
+                throw ExitCode.failure
+            } catch {
+                CLI.printError("Unexpected error: \(error)")
                 throw ExitCode.failure
             }
         }

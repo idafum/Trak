@@ -24,43 +24,28 @@ enum StorageError: Error {
 extension StorageError: LocalizedError {
     var errorDescription: String?{
         switch self {
+        case .failedToCreateDirectory(let url, _):
+            return "Failed to create directory: \(url.path)"
+        case .fileAlreadyExists(let url):
+            return "File already exists: \(url.lastPathComponent)"
         case .NoSuchFile(let name):
             return "No such file: \(name)"
+        case .failedToGetDirectoryContents(let url, _):
+            return "Failed to list directory contents: \(url.path)"
+        case .failedToDelete(let url, _):
+            return "Failed to delete: \(url.lastPathComponent)"
+        case .failedToPerfomRenameOperation(let oldURL, let newURL, _):
+            return "Failed to rename '\(oldURL.lastPathComponent)' to '\(newURL.lastPathComponent)'"
         case .invalidSubjectName(let name):
-            return "Invalid name: \(name)"
-        case .failedToCreateDirectory(let at, let underlying):
-            return """
-                
-                Failed to create Directory at:
-                \(at.lastPathComponent)
-                
-                Reason: \(underlying.localizedDescription)
-                """
-        case .fileAlreadyExists(url: let url):
-            return "Subject `\(url.lastPathComponent)` exists already."
-            
-        case .failedToGetDirectoryContents(url: let url, underlying: let underlying):
-            return "Failed to get directory contents at \(url.path()): \(underlying.localizedDescription)"
-            
-        case .failedToDelete(url: let url, underlying: let underlying):
-            return "Failed to delete file '\(url.lastPathComponent)': \(underlying.localizedDescription)"
-            
-        case .failedToPerfomRenameOperation(oldURL: let oldURL, newURL: let newURL, underlying: let underlying):
-            return "Failed to rename file from '\(oldURL.lastPathComponent)' to '\(newURL.lastPathComponent),  \(underlying.localizedDescription)"
-            
-        
-            
-        case .failedToReadFile(url: let url, underlying: let underlying):
-            return "Failed to read file at \(url.path()): \(underlying.localizedDescription)"
-            
-        case .failedToWriteFile(url: let url, underlying: let underlying):
-            return "Failed to write file at \(url.path()): \(underlying.localizedDescription)"
-            
-        case .jsonEncodingFailed(underlying: let underlying):
-            return "Failed to encode data to JSON: \(underlying.localizedDescription)"
-            
-        case .jsonDecodingFailed(underlying: let underlying):
-            return "Failed to decode JSON from \(underlying.localizedDescription)"
+            return "Invalid subject name: '\(name)'"
+        case .jsonDecodingFailed:
+            return "Failed to decode JSON data."
+        case .jsonEncodingFailed:
+            return "Failed to encode JSON data."
+        case .failedToReadFile(let url, _):
+            return "Failed to read file: \(url.lastPathComponent)"
+        case .failedToWriteFile(let url, _):
+            return "Failed to write file: \(url.lastPathComponent)"
         }
     }
 }
