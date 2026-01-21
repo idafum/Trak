@@ -71,21 +71,21 @@ final class SessionManager {
     
     func endSession(_ shouldDelete: Bool) throws -> SessionLogData?{
         //Ask data if a session exists
-        guard var activeSession = try dataManager.getSessionState() else {
+        guard let activeSession = try dataManager.getSessionState() else {
             throw SessionError.noActiveSession
         }
         
         //Active Session Exists
         if shouldDelete { //Delete Active session and do not log
-            let deleted = try dataManager.clearActiveSession()
+            let _ = try dataManager.clearActiveSession()
             return nil
             
         } else { //User wants to end and log session
             
             var totalPausedDuration: TimeInterval = 0
-            var now = Date()
+            let now = Date()
             if activeSession.state == .paused {
-                var pauseDuration = now.timeIntervalSince(activeSession.pausedAt ?? now)
+                let pauseDuration = now.timeIntervalSince(activeSession.pausedAt ?? now)
             
                 //Set the totalPausedDuration
                 totalPausedDuration = pauseDuration + activeSession.totalPausedDuration
@@ -95,10 +95,10 @@ final class SessionManager {
             }
             
             //calculate the total elapsed time
-            var totalElapsedTime: TimeInterval = now.timeIntervalSince(activeSession.startTime)
+            let totalElapsedTime: TimeInterval = now.timeIntervalSince(activeSession.startTime)
             
             //Calculate the trak time
-            var trakTime: TimeInterval = totalElapsedTime - totalPausedDuration
+            let trakTime: TimeInterval = totalElapsedTime - totalPausedDuration
             
             //Build our SessionLogData
             let sessionLogData = sessionLogBuilder(subjectName: activeSession.subjectName, totalElapsedTime: totalElapsedTime, totalPausedTime: totalPausedDuration, trakTime: trakTime)
