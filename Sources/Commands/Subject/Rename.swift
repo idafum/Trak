@@ -22,10 +22,14 @@ extension Trak.Subject {
         
         func run () throws {
             do {
+                CLI.printHeader("Rename Subject")
                 try TrakApp.subjectManager.renameSubject(oldName, newName)
-                print("Renamed '\(oldName)' to '\(newName)'")
-            } catch let err as StorageError {
-                print (err.localizedDescription)
+                CLI.printSuccess("Renamed '\(oldName)' to '\(newName)'.")
+            } catch let err as LocalizedError {
+                CLI.printError(err.errorDescription ?? "Failed to rename subject.")
+                throw ExitCode.failure
+            } catch {
+                CLI.printError("Unexpected error: \(error)")
                 throw ExitCode.failure
             }
         }

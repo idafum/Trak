@@ -19,10 +19,15 @@ extension Trak.Session {
         
         func run() throws {
             do {
+                CLI.printHeader("Start Session")
                 try TrakApp.sessionManager.startSession(on: subject)
-                print("Now tracking `\(subject)`...")
+                CLI.printSuccess("Now tracking '\(subject)'.")
+            } catch let err as LocalizedError {
+                CLI.printError(err.errorDescription ?? "Failed to start session.")
+                throw ExitCode.failure
             } catch {
-                print(error.localizedDescription)
+                CLI.printError("Unexpected error: \(error)")
+                throw ExitCode.failure
             }
         }
     }

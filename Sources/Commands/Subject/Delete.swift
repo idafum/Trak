@@ -19,11 +19,14 @@ extension Trak.Subject {
         
         func run () throws {
             do {
+                CLI.printHeader("Delete Subject")
                 try TrakApp.subjectManager.deleteSubject(name)
-                print ("'\(name)' deleted!")
-            }
-            catch let err as StorageError{
-                print(err.localizedDescription)
+                CLI.printSuccess("'\(name)' deleted.")
+            } catch let err as LocalizedError {
+                CLI.printError(err.errorDescription ?? "Failed to delete subject.")
+                throw ExitCode.failure
+            } catch {
+                CLI.printError("Unexpected error: \(error)")
                 throw ExitCode.failure
             }
         }
