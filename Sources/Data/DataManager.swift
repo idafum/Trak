@@ -285,19 +285,35 @@ class DataManager {
     func appendSessionLog(_ sessionLogData: SessionLogData) throws -> SessionLogData? {
         if try clearActiveSession() {
             //appendDataLog
-            let logName = "\(sessionLogData.subjectName).json"
+            
+            // Find existing log files for the subject with pattern "<SubjectName>-#N.json"
+            let existingLogs = try fileManager.contentsOfDirectory(at: dbSessionsURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                .filter { url in
+                    let filename = url.deletingPathExtension().lastPathComponent
+                    return filename.hasPrefix("\(sessionLogData.subjectName)-#")
+                }
+            
+            // Extract numbers N from filenames
+            let usedNumbers = existingLogs.compactMap { url -> Int? in
+                let filename = url.deletingPathExtension().lastPathComponent
+                // filename format: "<SubjectName>-#N"
+                // Extract substring after "\(subjectName)-#"
+                guard let range = filename.range(of: "-#") else { return nil }
+                let numberString = filename[range.upperBound...]
+                return Int(numberString)
+            }
+            
+            // Determine next available number
+            let nextNumber = (usedNumbers.max() ?? 0) + 1
+            
+            // Create new log file name
+            let logName = "\(sessionLogData.subjectName)-#\(nextNumber).json"
             
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
             //Encode the data
             do {
                 let dataToWrite = try encoder.encode(sessionLogData)
-                
-                // Unique name
-                let timestamp = makeTimestamp(Date())   // or sessionLogData.endedAt if you have it
-                let shortId = UUID().uuidString.prefix(8)
-                
-                let logName = "\(sessionLogData.subjectName)-\(timestamp)-\(shortId).json"
                 
                 let path = dbSessionsURL.appending(path: logName, directoryHint: .notDirectory).path(percentEncoded: false)
                 if fileManager.createFile(atPath: path, contents: dataToWrite) {
