@@ -50,7 +50,9 @@ Sessions are stored locally and can be reviewed anytime:
 `trak report`
 
 ## Demo
-*GIF coming soon...*
+<p align="center">
+  <img src="trak-demo.gif" alt="Trak demo" width="700">
+</p>
 
 ## Roadmap
 ### Trak for macOS
