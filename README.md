@@ -11,6 +11,15 @@ No accounts • No cloud • No distractions
 Currently supported on:
 - macOS 13+
 
+## Installation
+Download the latest version from Github Releases:
+
+```bash
+chmod +x trak
+sudo mv trak /usr/local/bin
+trak --help
+```
+
 ## Quick Start
 
 Get up and running in under a minute:
