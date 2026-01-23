@@ -14,6 +14,8 @@ Currently supported on:
 ## Installation
 Download the latest version from Github Releases:
 
+https://github.com/idafum/Trak/releases
+
 ```bash
 chmod +x trak
 sudo mv trak /usr/local/bin
