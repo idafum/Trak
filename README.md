@@ -6,6 +6,11 @@ Built for people who live in the terminal and want an offline way to track real 
 
 No accounts • No cloud • No distractions
 
+## Platform Support
+
+Currently supported on:
+- macOS 13+
+
 ## Quick Start
 
 Get up and running in under a minute:
