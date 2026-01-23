@@ -11,6 +11,8 @@ No accounts • No cloud • No distractions
 Currently supported on:
 - macOS 13+
 
+Linux support is planned.
+
 ## Installation
 Download the latest version from Github Releases:
 
