@@ -72,8 +72,4 @@ Sessions are stored locally and can be reviewed anytime:
   <img src="trakcli-demo.gif" alt="Trak demo" width="700">
 </p>
 
-## Roadmap
-### Trak for macOS
-
-- [ ] Native macOS app powered by Trak-CLI data
 
