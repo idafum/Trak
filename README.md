@@ -69,7 +69,7 @@ Sessions are stored locally and can be reviewed anytime:
 
 ## Demo
 <p align="center">
-  <img src="trak-demo.gif" alt="Trak demo" width="700">
+  <img src="trakcli-demo.gif" alt="Trak demo" width="700">
 </p>
 
 ## Roadmap
